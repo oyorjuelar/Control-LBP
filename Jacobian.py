@@ -13,12 +13,15 @@ class LQRT:
     rangoThetaP = [0,0]
     paso = 1
     archivo = 'Default.txt'
+    tabla = dict()
 
     def __init__(self,rt,rtp,p,a):
         self.rangoTheta = rt
         self.rangoThetaP = rtp
         self.paso = p
         self.archivo = a
+        self.tabla = self.getTabFrFile(a)
+
 
     def Lin(self):
         M = 0.5
@@ -127,10 +130,8 @@ class LQRT:
         
     def getK(self,i,j,nombreArchivo):
         try:
-            tabla = self.getTabFrFile(nombreArchivo)
-            return tabla.get((i,j))[0]
+            return self.tabla.get((i,j))[0]
         except TypeError:
-            tabla = self.getTabFrFile(nombreArchivo)
-            #print(i,j)
-            #print(self.aprox(self.rangoTheta[0],i,self.paso),self.aprox(self.rangoThetaP[0],j,self.paso))
-            return tabla.get((self.aprox(self.rangoTheta[0],i,self.paso),self.aprox(self.rangoThetaP[0],j,self.paso)))[0]
+            print(i,j)
+            print(self.aprox(self.rangoTheta[0],i,self.paso),self.aprox(self.rangoThetaP[0],j,self.paso))
+            return self.tabla.get((self.aprox(self.rangoTheta[0],i,self.paso),self.aprox(self.rangoThetaP[0],j,self.paso)))[0]
