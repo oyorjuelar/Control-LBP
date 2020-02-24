@@ -12,14 +12,13 @@ class LQRT:
     rangoTheta = [0,0]
     rangoThetaP = [0,0]
     paso = 1
-    archivo = 'Defaul.txt'
+    archivo = 'Default.txt'
 
     def __init__(self,rt,rtp,p,a):
         self.rangoTheta = rt
         self.rangoThetaP = rtp
         self.paso = p
         self.archivo = a
-        self.setTab2File(rt,rtp,p,a)
 
     def Lin(self):
         M = 0.5
@@ -82,13 +81,17 @@ class LQRT:
         totalS = (samples+1)*(samples2+1)
         s = 0
         b = len(str(float(step)).split('.')[1])
-        for i in np.linspace(rx1[0],rx1[1],samples+1):
-            for j in np.linspace(rx2[0],rx2[1],samples2+1):
+        n = 10**b
+        print(rx1[0]*n,rx1[1]*n,step*n)
+        for i in range(samples+1):
+            for j in range(samples2+1):
                 s+=1
+                n = round(rx1[0]+(i*step),b)
+                m = round(rx2[0]+(j*step),b)
                 print(str(round((s*100)/(totalS),2))+'%')
-                T2 = self.eval(T1,i,j)
+                T2 = self.eval(T1,n,m)
                 k,x,egv = self.lqr(T2[0],T2[1],Q,R)
-                tabla[round(i,b),round(j,b)] = k
+                tabla[n,m] = k
         return tabla
 
     def guardarDatos(self,nombreArchivo,tabla):
@@ -112,14 +115,22 @@ class LQRT:
         archivo.close()
         return tabla
 
-    def setTab2File(self,rx1,rx2,step,nombreArchivo):
+    def setTab2File(self):
         tabla = dict()
-        tabla = self.genTabla(rx1,rx2,step)
-        self.guardarDatos(nombreArchivo,tabla)
+        tabla = self.genTabla(self.rangoTheta,self.rangoThetaP,self.paso)
+        self.guardarDatos(self.archivo,tabla)
 
+    def aprox(self,bs,n,sp):
+        x = round(((n-bs)/sp))
+        b = len(str(float(sp)).split('.')[1])
+        return round(bs+(x*sp),b)
+        
     def getK(self,i,j,nombreArchivo):
         try:
             tabla = self.getTabFrFile(nombreArchivo)
             return tabla.get((i,j))[0]
         except TypeError:
-            print('paila')
+            tabla = self.getTabFrFile(nombreArchivo)
+            #print(i,j)
+            #print(self.aprox(self.rangoTheta[0],i,self.paso),self.aprox(self.rangoThetaP[0],j,self.paso))
+            return tabla.get((self.aprox(self.rangoTheta[0],i,self.paso),self.aprox(self.rangoThetaP[0],j,self.paso)))[0]

@@ -47,14 +47,15 @@ for _ in range(50):
 while (not test(math.fabs(vel(obs)),0.1,0.1)) or ang(obs)>3:
     obs = mov(env,0.9)
 while (not test(ang(obs),-2,0.1)):
-    obs = mov(env,-0.9)
-while (not test(ang(obs),-0.24,0.1)):
+    obs = mov(env,-0.8)
+while (not test(ang(obs),-1.3,0.1)):
     obs = mov(env,0)
 
-l = Jacobian.LQRT([-1,0],[0,1],1,'BL.txt')
-
+l = Jacobian.LQRT([-1.6,1.6],[-8,8],0.1,'BL.txt')
+#l.setTab2File()
 while True:
-    K = l.getK(0,0,'BL.txt')
+    K = l.getK(ang(obs),vel(obs),'BL.txt')
+    #K = l.getK(0,0,'BL.txt')   
     x = [obs[0],obs[1],ang(obs),vel(obs)]
     u = numpy.dot(K,x)
     u = usat(-u,10)
